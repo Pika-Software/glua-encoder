@@ -1,3 +1,3 @@
-name = "easy-encode"
+name = "glua-types-encoder"
 main = "init.lua"
-version = 1
+version = 000001
