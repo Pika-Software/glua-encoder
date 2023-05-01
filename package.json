@@ -1,0 +1,7 @@
+{
+    "name": "lets-compress",
+    "files": {
+        "lua/packages/lets-compress/package.lua": "https://raw.githubusercontent.com/Pika-Software/lets-compress/master/lua/packages/lets-compress/package.lua",
+        "lua/packages/lets-compress/init.lua": "https://raw.githubusercontent.com/Pika-Software/lets-compress/master/lua/packages/lets-compress/init.lua"
+    }
+}
