@@ -159,3 +159,9 @@ end )
 SetDecoder( "P", function( str )
     return player.GetBySteamID64( GetDecoder( "s" )( str ) )
 end )
+
+-- local encoded = Encode( "TEXT", true )
+-- print( encoded )
+
+-- local decoded = Decode( encoded, true )
+-- print( decoded )
