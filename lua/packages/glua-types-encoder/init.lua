@@ -1,3 +1,4 @@
+local ArgAssert = ArgAssert
 local util = util
 
 module( "gte", package.seeall )
