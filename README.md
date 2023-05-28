@@ -8,15 +8,12 @@
 - encoder.GetEncoder( `number` typeID )
 - encoder.SetEncoder( `number` typeID, `function` compressFunc )
 
-### Simple example
+### Example
 ```lua
-
   local encoder = install( "packages/glua-encoder", "https://github.com/Pika-Software/glua-encoder" )
 
   local encoded = encoder.Encode( "foofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoo", true )
-  
-  local decoded = encoder.Decode( encoded )
-  
+  local decoded = encoder.Decode( encoded, true )
   print( decoded )
 
 ```
