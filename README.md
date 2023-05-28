@@ -17,3 +17,15 @@
   print( decoded )
 
 ```
+
+## Supported types
+- TYPE_NIL
+- TYPE_BOOL
+- TYPE_STRING
+- TYPE_NUMBER
+- TYPE_TABLE `( does not support table links )`
+- TYPE_ANGLE
+- TYPE_VECTOR
+- TYPE_COLOR
+- TYPE_ENTITY
+- TYPE_CONVAR
