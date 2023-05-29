@@ -72,7 +72,7 @@ do
             encoded = util.Decompress( encoded )
         end
 
-        local key = string.byte( encoded, 1, 1 )
+        local key = string.byte( encoded )
         if not key then
             error( "Decoding failed, format of the encoded string is invalid." )
         end
