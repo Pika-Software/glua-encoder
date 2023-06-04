@@ -21,14 +21,14 @@ do
 
     local encoders = {}
 
-    function lib.GetEncoder( typeID )
-        return encoders[ typeID ]
+    function lib.GetEncoder( valueType )
+        return encoders[ valueType ]
     end
 
-    function lib.SetEncoder( typeID, encoder )
-        ArgAssert( typeID, 1, "number" )
+    function lib.SetEncoder( valueType, encoder )
+        ArgAssert( valueType, 1, "number" )
         ArgAssert( encoder, 2, "function" )
-        encoders[ typeID ] = encoder
+        encoders[ valueType ] = encoder
     end
 
     function lib.Encode( value, compress )
@@ -58,14 +58,14 @@ do
 
     local decoders = {}
 
-    function lib.GetDecoder( typeID )
-        return decoders[ string.char( typeID ) ]
+    function lib.GetDecoder( valueType )
+        return decoders[ string.char( valueType ) ]
     end
 
-    function lib.SetDecoder( typeID, decoder )
-        ArgAssert( typeID, 1, "number" )
+    function lib.SetDecoder( valueType, decoder )
+        ArgAssert( valueType, 1, "number" )
         ArgAssert( decoder, 2, "function" )
-        decoders[ string.char( typeID ) ] = decoder
+        decoders[ string.char( valueType ) ] = decoder
     end
 
     function lib.Decode( encoded, decompress )
@@ -73,12 +73,12 @@ do
             encoded = util.Decompress( encoded )
         end
 
-        local key = string.byte( encoded )
-        if not key then
+        local valueType = string.byte( encoded )
+        if not valueType then
             error( "Decoding failed, format of the encoded string is invalid." )
         end
 
-        local decoder = lib.GetDecoder( key )
+        local decoder = lib.GetDecoder( valueType )
         if not decoder then
             error( "Decoding failed, unknown type of encoding." )
         end
