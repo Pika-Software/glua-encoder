@@ -125,49 +125,52 @@ end )
 
 -- Table
 lib.SetEncoder( TYPE_TABLE, function( tbl )
-    local isSequential = table_IsSequential( tbl )
-    local str = lib.Encode( isSequential ) .. ";"
-    if isSequential then
-        local lenght = #tbl
-        for index, value in ipairs( tbl ) do
-            str = str .. lib.Encode( value )
-            if index ~= lenght then
-                str = str .. ";"
-            end
-        end
-    else
-        for key, value in pairs( tbl ) do
-            str = str .. lib.Encode( key ) .. ";" .. lib.Encode( value ) .. ";"
-        end
-    end
+    -- local isSequential = table_IsSequential( tbl )
+    -- local str = lib.Encode( isSequential ) .. ";"
+    -- if isSequential then
+    --     local length = #tbl
+    --     for index, value in ipairs( tbl ) do
+    --         str = str .. lib.Encode( value )
+    --         if index ~= length then
+    --             str = str .. ";"
+    --         end
+    --     end
+    -- else
+    --     for key, value in pairs( tbl ) do
+    --         str = str .. lib.Encode( key ) .. ";" .. lib.Encode( value ) .. ";"
+    --     end
+    -- end
 
-    return lib.Encode( str )
+    -- return lib.Encode( str )
+    return lib.Encode( util.TableToJSON( tbl ) )
 end )
 
 lib.SetDecoder( TYPE_TABLE, function( str )
-    local result, isSequential = {}, nil
+    -- local result, isSequential = {}, nil
 
-    local data = string.Split( lib.Decode( str ), ";" )
-    for index, line in ipairs( data ) do
-        if index == 1 then
-            isSequential = lib.Decode( line )
-            continue
-        end
+    -- local data = string.Split( lib.Decode( str ), ";" )
+    -- for index, line in ipairs( data ) do
+    --     if index == 1 then
+    --         isSequential = lib.Decode( line )
+    --         continue
+    --     end
 
-        local previousIndex = index - 1
-        if isSequential then
-            result[ previousIndex ] = lib.Decode( line )
-            continue
-        end
+    --     local previousIndex = index - 1
+    --     if isSequential then
+    --         result[ previousIndex ] = lib.Decode( line )
+    --         continue
+    --     end
 
-        if previousIndex % 2 ~= 0 then
-            continue
-        end
+    --     if previousIndex % 2 ~= 0 then
+    --         continue
+    --     end
 
-        result[ lib.Decode( data[ previousIndex ] ) ] = lib.Decode( data[ index ] )
-    end
+    --     result[ lib.Decode( data[ previousIndex ] ) ] = lib.Decode( data[ index ] )
+    -- end
 
-    return result
+    -- return result
+
+    return util.JSONToTable( lib.Decode( str ) )
 end )
 
 do
