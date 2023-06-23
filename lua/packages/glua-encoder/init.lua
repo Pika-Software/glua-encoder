@@ -1,16 +1,27 @@
+if not util.IsLuaModuleInstalled( "niknaks" ) then
+    import( "https://github.com/Nak2/NikNaks" )
+end
+
+require( "niknaks" )
 
 -- Libraries
+local NikNaks = NikNaks
 local string = string
 local util = util
 
 -- Variables
-local table_IsSequential = table.IsSequential
+local TYPE_NIL = TYPE_NIL
+local TYPE_BOOL = TYPE_BOOL
+local TYPE_STRING = TYPE_STRING
+local TYPE_NUMBER = TYPE_NUMBER
+local TYPE_TABLE = TYPE_TABLE
+local TYPE_VECTOR = TYPE_VECTOR
+local TYPE_ANGLE = TYPE_ANGLE
+local TYPE_COLOR = TYPE_COLOR
+local TYPE_ENTITY = TYPE_ENTITY
+local TYPE_CONVAR = TYPE_CONVAR
 local ArgAssert = ArgAssert
-local tostring = tostring
-local tonumber = tonumber
 local TypeID = TypeID
-local ipairs = ipairs
-local pairs = pairs
 local error = error
 local type = type
 
@@ -99,141 +110,121 @@ end )
 
 -- Boolean
 lib.SetEncoder( TYPE_BOOL, function( bool )
-    return bool and "1" or ""
+    if bool then
+        return " "
+    end
+
+    return ""
 end )
 
-lib.SetDecoder( TYPE_BOOL, function( str )
-    return str == "1"
+lib.SetDecoder( TYPE_BOOL, function( raw )
+    return raw == " "
 end )
 
 -- String
 lib.SetEncoder( TYPE_STRING, function( str )
-    return str
+    local buffer = NikNaks.BitBuffer()
+    buffer:WriteString( str )
+    buffer:Seek( 0 )
+    return buffer:Read()
 end )
 
-lib.SetDecoder( TYPE_STRING, function( str )
-    return str
+lib.SetDecoder( TYPE_STRING, function( raw )
+    local buffer = NikNaks.BitBuffer()
+    buffer:Write( raw )
+    buffer:Seek( 0 )
+    return buffer:ReadString()
 end )
 
 -- Number
 lib.SetEncoder( TYPE_NUMBER, function( number )
-    return tostring( number )
+    local buffer = NikNaks.BitBuffer()
+    buffer:WriteDouble( number )
+    buffer:Seek( 0 )
+    return buffer:Read()
 end )
 
-lib.SetDecoder( TYPE_NUMBER, function( str )
-    return tonumber( str ) or 0
+lib.SetDecoder( TYPE_NUMBER, function( raw )
+    local buffer = NikNaks.BitBuffer()
+    buffer:Write( raw )
+    buffer:Seek( 0 )
+    return buffer:ReadDouble()
 end )
 
 -- Table
 lib.SetEncoder( TYPE_TABLE, function( tbl )
-    -- local isSequential = table_IsSequential( tbl )
-    -- local str = lib.Encode( isSequential ) .. ";"
-    -- if isSequential then
-    --     local length = #tbl
-    --     for index, value in ipairs( tbl ) do
-    --         str = str .. lib.Encode( value )
-    --         if index ~= length then
-    --             str = str .. ";"
-    --         end
-    --     end
-    -- else
-    --     for key, value in pairs( tbl ) do
-    --         str = str .. lib.Encode( key ) .. ";" .. lib.Encode( value ) .. ";"
-    --     end
-    -- end
-
-    -- return lib.Encode( str )
-    return lib.Encode( util.TableToJSON( tbl ) )
+    local buffer = NikNaks.BitBuffer()
+    buffer:WriteTable( tbl )
+    buffer:Seek( 0 )
+    return buffer:Read()
 end )
 
-lib.SetDecoder( TYPE_TABLE, function( str )
-    -- local result, isSequential = {}, nil
-
-    -- local data = string.Split( lib.Decode( str ), ";" )
-    -- for index, line in ipairs( data ) do
-    --     if index == 1 then
-    --         isSequential = lib.Decode( line )
-    --         continue
-    --     end
-
-    --     local previousIndex = index - 1
-    --     if isSequential then
-    --         result[ previousIndex ] = lib.Decode( line )
-    --         continue
-    --     end
-
-    --     if previousIndex % 2 ~= 0 then
-    --         continue
-    --     end
-
-    --     result[ lib.Decode( data[ previousIndex ] ) ] = lib.Decode( data[ index ] )
-    -- end
-
-    -- return result
-
-    return util.JSONToTable( lib.Decode( str ) )
+lib.SetDecoder( TYPE_TABLE, function( raw )
+    local buffer = NikNaks.BitBuffer()
+    buffer:Write( raw )
+    buffer:Seek( 0 )
+    return buffer:ReadTable()
 end )
 
-do
+-- Vector
+lib.SetEncoder( TYPE_VECTOR, function( vector )
+    local buffer = NikNaks.BitBuffer()
+    buffer:WriteVector( vector )
+    buffer:Seek( 0 )
+    return buffer:Read()
+end )
 
-    local Angle = Angle
-    local Vector = Vector
+lib.SetDecoder( TYPE_VECTOR, function( raw )
+    local buffer = NikNaks.BitBuffer()
+    buffer:Write( raw )
+    buffer:Seek( 0 )
+    return buffer:ReadVector()
+end )
 
-    local function encodeVector( vector )
-        return lib.Encode( vector[1] ) .. " " .. lib.Encode( vector[2] ) .. " " .. lib.Encode( vector[3] )
-    end
+-- Angle
+lib.SetEncoder( TYPE_ANGLE, function( angle )
+    local buffer = NikNaks.BitBuffer()
+    buffer:WriteAngle( angle )
+    buffer:Seek( 0 )
+    return buffer:Read()
+end )
 
-    local function decodeVector( str )
-        local parts = string.Split( str, " " )
-        return lib.Decode( parts[ 1 ] ), lib.Decode( parts[ 2 ] ), lib.Decode( parts[ 3 ] )
-    end
+lib.SetDecoder( TYPE_ANGLE, function( raw )
+    local buffer = NikNaks.BitBuffer()
+    buffer:Write( raw )
+    buffer:Seek( 0 )
+    return buffer:ReadAngle()
+end )
 
-    -- Angle
-    lib.SetEncoder( TYPE_ANGLE, encodeVector )
-    lib.SetDecoder( TYPE_ANGLE, function( str ) return Angle( decodeVector( str ) ) end )
+-- Color
+lib.SetEncoder( TYPE_COLOR, function( color )
+    local buffer = NikNaks.BitBuffer()
+    buffer:WriteColor( color )
+    buffer:Seek( 0 )
+    return buffer:Read()
+end )
 
-    -- Vector
-    lib.SetEncoder( TYPE_VECTOR, encodeVector )
-    lib.SetDecoder( TYPE_VECTOR, function( str ) return Vector( decodeVector( str ) ) end )
+lib.SetDecoder( TYPE_COLOR, function( raw )
+    local buffer = NikNaks.BitBuffer()
+    buffer:Write( raw )
+    buffer:Seek( 0 )
+    return buffer:ReadColor()
+end )
 
-end
+-- Entity
+lib.SetEncoder( TYPE_ENTITY, function( entity )
+    local buffer = NikNaks.BitBuffer()
+    buffer:WriteType( entity )
+    buffer:Seek( 0 )
+    return buffer:Read()
+end )
 
-do
-
-    local Color = Color
-
-    -- Color
-    lib.SetEncoder( TYPE_COLOR, function( color )
-        return lib.Encode( color.r ) .. " " .. lib.Encode( color.g ) .. " " .. lib.Encode( color.b ) .. " " .. lib.Encode( color.a )
-    end )
-
-    lib.SetDecoder( TYPE_COLOR, function( str )
-        local parts = string.Split( str, " " )
-        return Color( lib.Decode( parts[ 1 ] ), lib.Decode( parts[ 2 ] ), lib.Decode( parts[ 3 ] ), lib.Decode( parts[ 4 ] ) )
-    end )
-
-end
-
-do
-
-    local IsValid = IsValid
-    local Entity = Entity
-
-    -- Entity
-    lib.SetEncoder( TYPE_ENTITY, function( ent )
-        if IsValid( ent ) or ent:IsWorld() then
-            return lib.Encode( ent:EntIndex() )
-        end
-
-        return ""
-    end )
-
-    lib.SetDecoder( TYPE_ENTITY, function( str )
-        if #str == 0 then return NULL end
-        return Entity( lib.Decode( str ) )
-    end )
-
-end
+lib.SetDecoder( TYPE_ENTITY, function( raw )
+    local buffer = NikNaks.BitBuffer()
+    buffer:Write( raw )
+    buffer:Seek( 0 )
+    return buffer:ReadType()
+end )
 
 do
 
@@ -241,11 +232,13 @@ do
 
     -- ConVar
     lib.SetEncoder( TYPE_CONVAR, function( conVar )
-        return conVar:GetName()
+        local encoder = lib.GetEncoder( TYPE_STRING )
+        return encoder( conVar:GetName() )
     end )
 
-    lib.SetDecoder( TYPE_CONVAR, function( str )
-        return GetConVar( str )
+    lib.SetDecoder( TYPE_CONVAR, function( raw )
+        local decoder = lib.GetDecoder( TYPE_STRING )
+        return GetConVar( decoder( raw ) )
     end )
 
 end

@@ -1,2 +1,2 @@
 name = "glua-encoder"
-version = 010001
+version = 020000
