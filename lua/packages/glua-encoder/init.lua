@@ -226,11 +226,11 @@ lib.SetDecoder( TYPE_ENTITY, function( raw )
     return buffer:ReadType()
 end )
 
+-- ConVar
 do
 
     local GetConVar = GetConVar
 
-    -- ConVar
     lib.SetEncoder( TYPE_CONVAR, function( conVar )
         local encoder = lib.GetEncoder( TYPE_STRING )
         return encoder( conVar:GetName() )
@@ -239,6 +239,32 @@ do
     lib.SetDecoder( TYPE_CONVAR, function( raw )
         local decoder = lib.GetDecoder( TYPE_STRING )
         return GetConVar( decoder( raw ) )
+    end )
+
+end
+
+-- DamageInfo
+do
+
+    local CTakeDamageInfo = FindMetaTable( "CTakeDamageInfo" )
+
+    lib.SetEncoder( TYPE_DAMAGEINFO, function( damageInfo )
+        local data = {}
+        for key, func in pairs( CTakeDamageInfo ) do
+            if not string.StartWith( key, "Get" ) then continue end
+            data[ string.sub( key, 4 ) ] = func( damageInfo )
+        end
+
+        return lib.Encode( data, false )
+    end )
+
+    lib.SetDecoder( TYPE_DAMAGEINFO, function( raw )
+        local damageInfo = DamageInfo()
+        for key, value in pairs( lib.Decode( raw, false ) ) do
+            damageInfo[ "Set" .. key ]( damageInfo, value )
+        end
+
+        return damageInfo
     end )
 
 end
