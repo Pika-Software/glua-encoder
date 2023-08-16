@@ -26,6 +26,7 @@ local error = error
 local type = type
 
 local lib = {}
+gec = lib
 
 -- Encode
 do

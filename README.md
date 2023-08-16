@@ -10,7 +10,7 @@
 
 ### Example
 ```lua
-  local encoder = install( "packages/glua-encoder", "https://github.com/Pika-Software/glua-encoder" )
+  local encoder = install( "packages/glua-encoder.lua", "https://raw.githubusercontent.com/Pika-Software/glua-encoder/main/lua/packages/glua-encoder.lua" )
 
   local encoded = encoder.Encode( "foofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoo", true )
   local decoded = encoder.Decode( encoded, true )
