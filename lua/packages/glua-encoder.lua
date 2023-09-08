@@ -1,8 +1,4 @@
-if not util.IsLuaModuleInstalled( "niknaks" ) then
-    import( "https://github.com/Nak2/NikNaks" )
-end
-
-require( "niknaks" )
+install( "niknaks", "https://github.com/Nak2/NikNaks" )
 
 -- Libraries
 local NikNaks = NikNaks
